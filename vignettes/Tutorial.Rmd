@@ -1,20 +1,19 @@
 ---
 title: "Scissor Tutorial"
 author: "Duanchen Sun"
-date: "`r Sys.Date()`"
-output: 
-  pdf_document:
-    latex_engine: xelatex
-    number_sections: yes
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    df_print: paged
     toc: yes
-vignette: >
+vignette: |
   %\VignetteIndexEntry{Scissor Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
 
 # Introduction
-Scissor package contains the proposed Scissor algorithm (function `Scissor`), which is designed to utilizes the disease phenotype from bulk RNA-seq to identify the most relevant cell subsets from single-cell sequencing data. Scissor can select a subset of cells that are most responsible for the differences of bulk phenotypes through a regularized regression model. In this tutorial, we use several examples to help users executing Scissor in real applications. 
+This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes disease phenotypes that have been collected for bulk assays to identify the cell subpopulations that most highly correlate with a given phenotype. Scissor provides a novel framework to identify the biologically and clinically relevant cell subpopulations from single-cell assays by leveraging the wealth of phenotypes and bulk-omics datasets. In this tutorial, we used several examples to help users executing Scissor in real applications. 
 
 We first load in the required package:
 ```{r message=FALSE}
@@ -23,26 +22,26 @@ library(Scissor)
 
 # Scissor implementation example
 ## Input data preparation
-There are two necessary input data sources of Scissor: a bulk expression data with phenotypes or clinical information and a single-cell RNA-seq expression data. We load in the processed Lung Adenocarcinoma (LUAD) TPM quantification data and the corresponding survival information downloaded from TCGA.
+There are two necessary input data sources of Scissor: a single-cell expression matrix and a bulk profiling data with sample phenotype, which can be a binary group indicator vector or clinical survival data. In this tutorial, the application of lung cancer cell in our manuscript was used as an example. First, let's load in the processed Lung Adenocarcinoma (LUAD) TPM quantification data and the corresponding survival information downloaded from The Cancer Genome Atlas (TCGA).
 ```{r}
-load('bulk_dataset.RData')
-load('bulk_survival.RData')
+load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/bulk_dataset.RData'))
+load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/bulk_survival.RData'))
 ```
 
 In this bulk expression matrix, each row is a gene and each column is a sample. The dimensions of LUAD bulk dataset are:
 ```{r}
 dim(bulk_dataset)
 ```
-which indicate there are totally 56716 genes and 471 samples. Besides, all of these samples have clinical outcomes:
+which indicate there are 56716 genes and 471 samples in total. Besides, all of these samples have clinical outcomes:
 ```{r}
 head(bulk_survival)
 all(colnames(bulk_dataset) == bulk_survival$TCGA_patient_barcode)
 ```
-Note that Scissor requires a three-column format of clinical data, if the users want to identify a cell subset that are correlated with good or bad survival. The first column contains the sample ID (observations), which should in the same order with the columns in bulk expression matrix. The second column is the survival time and the third column stands for the event (e.g.recurrence of cancer or death), which is indicated by the variable "Status" with 0 = no event (censored) and 1 = event. 
+Note that Scissor requires a three-column format of clinical data, if the users want to identify a cell subpopulation that are correlated with good or bad survival. The first column contains the sample ID (observations), which should in the same order with the columns in bulk expression matrix. The second column is the survival time and the third column stands for the event of interest (e.g.recurrence of cancer or death), which is indicated by the variable "Status" with 0 means no event (censored) and 1 means event. 
 
-Then we load in the LUAD single-cell RNA-seq raw counts data analyzed by `Lambrechts et al`:
+Then, we load in the LUAD single-cell RNA-seq raw counts data:
 ```{r}
-load('sc_dataset.RData')
+load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/sc_dataset.RData'))
 ```
 Same with the bulk expression matrix, the rows and columns are genes and cells, respectively. The dimensions of LUAD single-cell data are:
 ```{r}
@@ -51,22 +50,23 @@ dim(sc_dataset)
 The users do not need to keep the common genes between bulk and single-cell expression datasets, which can be automatically achieved by the preprocessing steps of Scissor. 
 
 
-## Identify the most relevent cells by Scissor
-Given the above inputs, now we can use Scissor to select the most relevent cells with the guidence of survival outcomes, which is achieved by a Cox regression model (`family = 'cox'`). We set the ratio between L1 norm and Laplacian regularization is 0.05 (`alpha = 0.05`)
+## Identify the most relevent cell subpopulations by Scissor
+Given the above inputs, now we can use Scissor to select the most relevent cell subpopulations with the guidence of phenotype (survival outcomes), which is fitted by a Cox regression model (`family = 'cox'`). We set the ratio between the L1 norm and Laplacian regularization to 0.05 (`alpha = 0.05`):
 ```{r warning=FALSE}
-infos <- Scissor(alpha = 0.05, family = 'cox', Given_Inputs = NULL,
-                 bulk_dataset = bulk_dataset, sc_dataset = sc_dataset,
+infos <- Scissor(alpha = 0.05, family = 'cox', Given_Inputs = NULL, 
+                 bulk_dataset = bulk_dataset, sc_dataset = sc_dataset, cor_type = 'pearson',
                  survival_info = bulk_survival, save_file = 'test.RData')
 
 ```
 The output message of Scissor indicates that there are 201 Scissor+ cells and 4 Scissor- cells. The information of selected cells is saved in variable `infos`:
 ```{r}
+names(infos)
 length(infos$Cell_positive)
-infos$Cell_positive[1:5]
+infos$Cell_positive[1:4]
 length(infos$Cell_negative)
 infos$Cell_negative
 ```
-Besides, the output of Scissor also contains a preprocessed single-cell Seurat object `Seurat_data`, which can directly accept the functions in Seurat package to analysis and visualization. The internal function in Scissor will automatically save the selected cells into the metadata in `Seurat_data`. Therefore, users can visualize the selected cells as:
+Besides, the output of Scissor also contains a preprocessed single-cell Seurat object `Seurat_data`, which can directly accept the functions in `Seurat` package for analysis and visualization. The internal function in Scissor will automatically save the selected cells into a metadata in `Seurat_data`. Therefore, users can visualize the selected cells as:
 ```{r fig.align="center", fig.width = 5.5}
 DimPlot(object = infos$Seurat_data, reduction = 'umap', group.by = 'scissor', 
         cols = c('grey','red','blue'), pt.size = 1, order = c(2,1))
@@ -75,18 +75,14 @@ in which `1` stand for the Scissor+ cells and `2` stand for the Scissor- cells.
 
 
 ## Parameter tuning in Scissor
-Usually, users cannot obtain the most informative selected cell at the first trial. In applications, Scissor will automatically save the preprocessed inputs for regression into a RData (`save_file = 'test.RData`), which is convenient for users to directly execute the step of parameter tuning. Suppose users use the above file name `test.RData`, Scissor can reselect the cells with a new alpha (`alpha = 0.01`) as:
+Usually, users cannot obtain the most informative selected cell at the first trial. In applications, Scissor will automatically save the preprocessed inputs for regression into a RData (`save_file = 'test.RData`), which is convenient for users to directly execute the parameter tuning step. Suppose users use the above file name `test.RData`, Scissor can reselect the cells with a new alpha (`alpha = 0.01`) as:
 ```{r warning=FALSE}
 infos <- Scissor(alpha = 0.01, family = 'cox', Given_Inputs = 'test.RData',
                  bulk_dataset, sc_dataset, bulk_survival)
 
 ```
-The smaller alpha leads to a less sparse selection result. At this time, the output message of Scissor indicates that there are 573 Scissor+ cells and 20 Scissor- cells. Usually, we recommand that the total selected cells of Scissor should not exceed the 10% of total cells in single-cell RNA-seq data. In practice, users can change the alpha with `Given_Inputs` equals to the saved file name to meet their different goals.
-
-
-# Downstream analyses
-Should we incorporate another function `get_enrichment` in Scissor Package? Camera? VIPER?
+A smaller alpha leads to a less sparse selection result. At this time, the output message of Scissor indicates that there are 573 Scissor+ cells and 20 Scissor- cells. Usually, we recommand that the total selected cells of Scissor should not exceed the minimum number of 10% of total cells in single-cell RNA-seq data and 1000. In practice, users can change the alpha with `Given_Inputs` equals to the saved file name to meet their different goals.
 
 
 # Reference
-Duanchen Sun and Zheng Xia (2020): Scissor: Phenotype guided single-cell subset identification from bulk RNA-seq.
+Duanchen Sun and Zheng Xia (2020): Phenotype-guided subpopulation identification from single-cell sequencing data
