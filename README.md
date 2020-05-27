@@ -1,7 +1,7 @@
 # Scissor: Single-Cell Identification of Subsets with bulk RNA-Seq phenotype cORrelation #
 
 `Scissor` is a novel proposed network-based model, which can identify the cooperative biomarkers for heterogeneous complex disease diagnoses.
-![Scissor_workflow](Figure_Method.jpg)
+![Scissor_workflow](Figure_Method.pdf)
 
 ### How to cite `Scissor` ###
 Please cite the following publication:
