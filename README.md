@@ -9,7 +9,7 @@
 
 ### Installation ###
 * Latest version: The latest developmental version of Scissor can be downloaded from GitHub and installed from source by
-`# install.packages("devtools")`
+`# install.packages("devtools")`  
 `devtools::install_github('sunduanchen/Scissor')`
 
 
