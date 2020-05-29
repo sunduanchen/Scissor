@@ -3,7 +3,8 @@
 ### Introduction ###
 `Scissor` is a novel single cell data analysis approach. By leveraging bulk data and phenotype information, Scissor automatically selects a subset of cells from the single-cell data that is most responsible for the differences of phenotypes through a graph-regularized sparse regression model.
 ![Scissor_workflow](Figure_Method.jpg =24x48)
-<img src=Figure_Method.jpg height="24" width="48">
+
+<img src=Figure_Method.jpg height="480" width="240">
 
 ### Installation ###
 * Latest version: The latest developmental version of Scissor can be downloaded from GitHub and installed from source by
