@@ -2,7 +2,7 @@
 
 ### Introduction ###
 `Scissor` is a novel single cell data analysis approach. By leveraging bulk data and phenotype information, Scissor automatically selects a subset of cells from the single-cell data that is most responsible for the differences of phenotypes through a graph-regularized sparse regression model.
-![Scissor_workflow](Figure_Method.jpg){:height="48px" width="24px"}
+![Scissor_workflow](Figure_Method.jpg =24x48)
 
 ### Installation ###
 * Latest version: The latest developmental version of Scissor can be downloaded from GitHub and installed from source by
@@ -22,4 +22,4 @@ Please cite the following publication:
 > *Duanchen Sun and Zheng Xia (2020): Phenotype-guided subpopulation identification from single-cell sequencing data.*<br />
 
 ### License ###
-GNU General Public License v3.0.
+Scissor is licensed under the GNU General Public License v3.0.
