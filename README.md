@@ -22,7 +22,8 @@ Our tutorial https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.ht
 ### How to cite `Scissor` ###
 Please cite the following publication:
 
-> *Duanchen Sun and Zheng Xia (2020): Phenotype-guided subpopulation identification from single-cell sequencing data.*<br />
+> *Phenotype-guided subpopulation identification from single-cell sequencing data  
+Duanchen Sun, Xiangnan Guan, Amy E Moran, David Z Qian, Pepper J Schedin, Andrew Adey, Paul T Spellman, and Zheng Xia*<br />
 
 ### License ###
 Scissor is licensed under the GNU General Public License v3.0.
