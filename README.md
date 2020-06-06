@@ -14,10 +14,10 @@
 
 
 ### Manual ###
-Please see https://sunduanchen.github.io/RegSeq/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to read the help documents.
+Please see https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to read the help documents.
 
 ### Example ###
-Our tutorial https://sunduanchen.github.io/RegSeq/Scissor_Tutorial.html provided an example of Scissor, which identified a lung cancer cell subpopulation from lung cancer single cell data, guided by the TCGA-LUAD 471 bulk RNA-seq samples and their corresponding survival information.
+Our tutorial https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html provided an example of Scissor, which identified a lung cancer cell subpopulation from lung cancer single cell data, guided by the TCGA-LUAD 471 bulk RNA-seq samples and their corresponding survival information.
 
 ### How to cite `Scissor` ###
 Please cite the following publication:
