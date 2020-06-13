@@ -14,19 +14,17 @@ Jun, 2020: Scissor version 1.0.0 is launched.
 * Prerequisites:
 Scissor is developed under R (*version >= 3.6.1*). The [Seurat](https://satijalab.org/seurat/) packages (*version >= 3.0.0*) is used for loading data and preprocessing.
 
-
 * Latest version: The latest developmental version of Scissor can be downloaded from GitHub and installed from source by
-`# install.packages("devtools")`  
 `devtools::install_github('sunduanchen/Scissor')`
 
 ### Manual ###
-Please see https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to read the help documents.
+Please see https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to access the help documents.
 
 ### Example ###
-Our tutorial https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html provided an example of Scissor, which identified a lung cancer cell subpopulation from lung cancer single cell data, guided by the TCGA-LUAD 471 bulk RNA-seq samples and their corresponding survival information.
+Our tutorial https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html provids an example of Scissor, which identified a lung cancer cell subpopulation from lung cancer single cell data, guided by the TCGA-LUAD 471 bulk RNA-seq samples and their corresponding survival information.
 
 ### How to cite `Scissor` ###
-Please cite the following publication:
+Please cite the following manuscript:
 
 > *Phenotype-guided subpopulation identification from single-cell sequencing data  
 Duanchen Sun, Xiangnan Guan, Amy E Moran, David Z Qian, Pepper J Schedin, Andrew Adey, Paul T Spellman, and Zheng Xia*<br />
