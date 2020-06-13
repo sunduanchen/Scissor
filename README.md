@@ -13,7 +13,7 @@
 `devtools::install_github('sunduanchen/Scissor')`
 
 ### Prerequisites ###
-* R > 3.6.0
+* R > 3.6.1
 * Seurat > 3.0.0
 
 ### Manual ###
