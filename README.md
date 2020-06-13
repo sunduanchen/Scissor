@@ -13,8 +13,8 @@
 `devtools::install_github('sunduanchen/Scissor')`
 
 ### Prerequisites ###
-1. R > 3.6.0
-2. Seurat > 3.0.0
+* R > 3.6.0
+* Seurat > 3.0.0
 
 ### Manual ###
 Please see https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to read the help documents.
