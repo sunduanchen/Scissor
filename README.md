@@ -8,13 +8,12 @@
 </p>
 
 ### Installation ###
+* Prerequisites:
+Scissor is developed under R (*version >= 3.6.1*). The Seurat packages (*version >= 3.0.0*) is used for loading data and preprocessing, which can be downloaded and installed at https://satijalab.org/seurat/.
+
 * Latest version: The latest developmental version of Scissor can be downloaded from GitHub and installed from source by
 `# install.packages("devtools")`  
 `devtools::install_github('sunduanchen/Scissor')`
-
-### Prerequisites ###
-* R > 3.6.1
-* Seurat > 3.0.0
 
 ### Manual ###
 Please see https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to read the help documents.
