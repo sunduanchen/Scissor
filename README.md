@@ -12,7 +12,7 @@ Jun, 2020: Scissor version 1.0.0 is launched.
 
 ### Installation ###
 * Prerequisites:
-Scissor is developed under R (*version >= 3.6.1*). The [Seurat](https://satijalab.org/seurat/) packages (*version >= 3.0.0*) is used for loading data and preprocessing.
+Scissor is developed under R (*version >= 3.6.1*). The [Seurat](https://satijalab.org/seurat/) package (*version >= 3.0.0*) is used for loading data and preprocessing.
 
 * Latest version: The latest developmental version of Scissor can be downloaded from GitHub and installed from source by
 `devtools::install_github('sunduanchen/Scissor')`
