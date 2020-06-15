@@ -11,7 +11,7 @@
 
 <meta name="author" content="Duanchen Sun" />
 
-<meta name="date" content="2020-05-27" />
+<meta name="date" content="2020-06-15" />
 
 <title>Scissor Tutorial</title>
 
@@ -182,7 +182,7 @@ summary {
 
 <h1 class="title toc-ignore">Scissor Tutorial</h1>
 <h4 class="author">Duanchen Sun</h4>
-<h4 class="date">2020-05-27</h4>
+<h4 class="date">2020-06-15</h4>
 
 </div>
 
@@ -200,7 +200,7 @@ summary {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This Scissor R package contains the proposed Scissor algorithm (function <code>Scissor</code>), which is a novel single-cell data analysis approach that utilizes disease phenotypes that have been collected for bulk assays to identify the cell subpopulations that most highly correlate with a given phenotype. Scissor provides a novel framework to identify the biologically and clinically relevant cell subpopulations from single-cell assays by leveraging the wealth of phenotypes and bulk-omics datasets. In this tutorial, we used several examples to help users executing Scissor in real applications.</p>
+<p>This Scissor R package contains the proposed Scissor algorithm (function <code>Scissor</code>), which is a novel single-cell data analysis approach that utilizes disease phenotypes that have been collected for bulk assays to identify the cell subpopulations that most highly correlate with a given phenotype. Scissor provides a novel framework to identify the biologically and clinically relevant cell subpopulations from single-cell assays by leveraging the wealth of phenotypes and bulk-omics datasets. In this tutorial (R version: 3.6.1), we used several examples to help users executing Scissor in real applications.</p>
 <p>We first load in the required package:</p>
 <pre class="r"><code>library(Scissor)</code></pre>
 </div>
@@ -259,13 +259,14 @@ load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/bulk_s
 <p>Usually, users cannot obtain the most informative selected cell at the first trial. In applications, Scissor will automatically save the preprocessed inputs for regression into a RData (<code>save_file = 'test.RData</code>), which is convenient for users to directly execute the parameter tuning step. Suppose users use the above file name <code>test.RData</code>, Scissor can reselect the cells with a new alpha (<code>alpha = 0.01</code>) as:</p>
 <pre class="r"><code>infos &lt;- Scissor(alpha = 0.01, family = 'cox', Given_Inputs = 'test.RData',
                  bulk_dataset, sc_dataset, bulk_survival)</code></pre>
-<pre><code>## [1] &quot;Scissor output information: Positive cells: 573. Negative cells: 20.&quot;</code></pre>
-<p>A smaller alpha leads to a less sparse selection result. At this time, the output message of Scissor indicates that there are 573 Scissor+ cells and 20 Scissor- cells. Usually, we recommand that the total selected cells of Scissor should not exceed the minimum number of 10% of total cells in single-cell RNA-seq data and 1000. In practice, users can change the alpha with <code>Given_Inputs</code> equals to the saved file name to meet their different goals.</p>
+<pre><code>## [1] &quot;Scissor output information: Positive cells: 575. Negative cells: 8.&quot;</code></pre>
+<p>A smaller alpha leads to a less sparse selection result. At this time, the output message of Scissor indicates that there are 573 Scissor+ cells and 20 Scissor- cells. Usually, we recommand that the total selected cells of Scissor should not exceed 10% of total cells in single-cell RNA-seq data. In practice, users can change the alpha with <code>Given_Inputs</code> equals to the saved file name to meet their different goals.</p>
 </div>
 </div>
 <div id="reference" class="section level1">
 <h1>Reference</h1>
-<p>Duanchen Sun and Zheng Xia (2020): Phenotype-guided subpopulation identification from single-cell sequencing data</p>
+<p>Phenotype-guided subpopulation identification from single-cell sequencing data.</p>
+<p>Duanchen Sun, Xiangnan Guan, Amy E Moran, David Z Qian, Pepper J Schedin, Andrew Adey, Paul T Spellman, and Zheng Xia</p>
 </div>
 
 

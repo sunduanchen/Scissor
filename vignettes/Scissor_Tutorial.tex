@@ -107,7 +107,7 @@
 
 \title{Scissor Tutorial}
 \author{Duanchen Sun}
-\date{2020-05-27}
+\date{2020-06-15}
 
 \begin{document}
 \maketitle
@@ -125,8 +125,8 @@ assays to identify the cell subpopulations that most highly correlate
 with a given phenotype. Scissor provides a novel framework to identify
 the biologically and clinically relevant cell subpopulations from
 single-cell assays by leveraging the wealth of phenotypes and bulk-omics
-datasets. In this tutorial, we used several examples to help users
-executing Scissor in real applications.
+datasets. In this tutorial (R version: 3.6.1), we used several examples
+to help users executing Scissor in real applications.
 
 We first load in the required package:
 
@@ -346,20 +346,23 @@ reselect the cells with a new alpha (\texttt{alpha\ =\ 0.01}) as:
 \end{Shaded}
 
 \begin{verbatim}
-## [1] "Scissor output information: Positive cells: 573. Negative cells: 20."
+## [1] "Scissor output information: Positive cells: 3. Negative cells: 0."
 \end{verbatim}
 
 A smaller alpha leads to a less sparse selection result. At this time,
 the output message of Scissor indicates that there are 573 Scissor+
 cells and 20 Scissor- cells. Usually, we recommand that the total
-selected cells of Scissor should not exceed the minimum number of 10\%
-of total cells in single-cell RNA-seq data and 1000. In practice, users
-can change the alpha with \texttt{Given\_Inputs} equals to the saved
-file name to meet their different goals.
+selected cells of Scissor should not exceed 10\% of total cells in
+single-cell RNA-seq data. In practice, users can change the alpha with
+\texttt{Given\_Inputs} equals to the saved file name to meet their
+different goals.
 
 \section{Reference}\label{reference}
 
-Duanchen Sun and Zheng Xia (2020): Phenotype-guided subpopulation
-identification from single-cell sequencing data
+Phenotype-guided subpopulation identification from single-cell
+sequencing data.
+
+Duanchen Sun, Xiangnan Guan, Amy E Moran, David Z Qian, Pepper J
+Schedin, Andrew Adey, Paul T Spellman, and Zheng Xia
 
 \end{document}
