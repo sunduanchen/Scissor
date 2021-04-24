@@ -21,8 +21,8 @@ Scissor is developed under R (*version >= 3.6.1*). The [Seurat](https://satijala
 ### Manual ###
 Please see https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html for details. In the R terminal, please use the command `?Scissor` to access the help documents.
 
-### Example ###
-Our tutorial https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html provides  examples of Scissor, which identified a lung cancer cell subpopulation from lung cancer single cell data, guided by the TCGA-LUAD 471 bulk RNA-seq samples and their corresponding survival information.
+### Examples ###
+Our [tutorial](https://sunduanchen.github.io/Scissor/vignettes/Scissor_Tutorial.html) provides  examples of Scissor, which identified a lung cancer cell subpopulation from lung cancer single cell data, guided by the TCGA-LUAD 471 bulk RNA-seq samples and their corresponding survival information.
 
 ### How to cite `Scissor` ###
 Please cite the following manuscript:
