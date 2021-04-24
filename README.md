@@ -1,10 +1,10 @@
 # Scissor: Single-Cell Identification of Subpopulations with bulk Sample phenOtype coRrelation #
 
 ### Introduction ###
-`Scissor` is a novel approach that utilizes the phenotypes, such as disease stage, tumor metastasis, treatment response, and survival outcomes, collected from bulk assays to identify the most highly phenotype-associated cell subpopulations from single-cell data.
+`Scissor` is a novel approach that utilizes the phenotypes, such as disease stage, tumor metastasis, treatment response, and survival outcomes, collected from bulk assays to identify the most highly phenotype-associated cell subpopulations from single-cell data. The workflow of Scissor is shown in the following Figure:
 
 <p align="center">
-<img src=Figure_Method.jpg height="602" width="500">
+<img src=Figure_Method.jpg height="702" width="600">
 </p>
 
 ### News ###
