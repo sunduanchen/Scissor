@@ -349,8 +349,8 @@ DimPlot(sc_dataset, reduction = 'umap', group.by = 'scissor', cols = c('grey','i
 ## [1] &quot;The percentage of selected cell is: 22.355%&quot;
 ## 
 ## [1] &quot;alpha = 0.007&quot;
-## [1] &quot;Scissor identified 456 Scissor+ cells and 81 Scissor- cells.&quot;
-## [1] &quot;The percentage of selected cell is: 13.091%&quot;
+## [1] &quot;Scissor identified 729 Scissor+ cells and 24 Scissor- cells.&quot;
+## [1] &quot;The percentage of selected cell is: 18.357%&quot;
 ## [1] &quot;|**************************************************|&quot;</code></pre>
 </div>
 </div>
@@ -423,7 +423,7 @@ Figure 1. General criterion to interpret phenotypes.
 <pre class="r"><code>load('Scissor_LUAD_survival.RData')</code></pre>
 <p>We use the 10-fold cross-validation (<code>nfold = 10</code>) and set the permutation time as 10 (<code>n = 10</code>) to save some time. In real applications, the reliability significance test can be time-consuming for larger permutation time (default <code>n = 100</code>).</p>
 <pre class="r"><code>numbers &lt;- length(infos1$Scissor_pos) + length(infos1$Scissor_neg)
-result1 &lt;- reliability.test(X, Y, network, alpha = 0.05, family = &quot;cox&quot;, cell_num = numbers, n = 1, nfold = 10)</code></pre>
+result1 &lt;- reliability.test(X, Y, network, alpha = 0.05, family = &quot;cox&quot;, cell_num = numbers, n = 10, nfold = 10)</code></pre>
 <pre><code>## [1] &quot;|**************************************************|&quot;
 ## [1] &quot;Perform cross-validation on X with true label&quot;
 ## Finished!
@@ -439,7 +439,7 @@ result1 &lt;- reliability.test(X, Y, network, alpha = 0.05, family = &quot;cox&q
 <p>Similarly, we can test the Scissor selected cells associated with the <em>TP53</em> mutant or wild-types.</p>
 <pre class="r"><code>load('Scissor_LUAD_TP53_mutation.RData')
 numbers &lt;- length(infos5$Scissor_pos) + length(infos5$Scissor_neg)
-result2 &lt;- reliability.test(X, Y, network, alpha = 0.2, family = &quot;binomial&quot;, cell_num = numbers, n = 1, nfold = 10)</code></pre>
+result2 &lt;- reliability.test(X, Y, network, alpha = 0.2, family = &quot;binomial&quot;, cell_num = numbers, n = 10, nfold = 10)</code></pre>
 <pre><code>## [1] &quot;|**************************************************|&quot;
 ## [1] &quot;Perform cross-validation on X with true label&quot;
 ## Finished!
