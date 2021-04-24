@@ -13,78 +13,193 @@ vignette: |
 
 
 # Introduction
-This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes disease phenotypes that have been collected for bulk assays to identify the cell subpopulations that most highly correlate with a given phenotype. Scissor provides a novel framework to identify the biologically and clinically relevant cell subpopulations from single-cell assays by leveraging the wealth of phenotypes and bulk-omics datasets. In this tutorial (R version: 3.6.1), we used several examples to help users executing Scissor in real applications. 
+
+This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell RNA-seq (scRNA-seq) data. In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications. 
 
 We first load in the required package:
 ```{r message=FALSE}
 library(Scissor)
 ```
 
-# Scissor implementation example
-## Input data preparation
-There are two necessary input data sources of Scissor: a single-cell expression matrix and a bulk profiling data with sample phenotype, which can be a binary group indicator vector or clinical survival data. In this tutorial, the application of lung cancer cell in our manuscript was used as an example. First, let's load in the processed Lung Adenocarcinoma (LUAD) TPM quantification data and the corresponding survival information downloaded from The Cancer Genome Atlas (TCGA).
-```{r}
-load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/bulk_dataset.RData'))
-load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/bulk_survival.RData'))
-```
+# Scissor examples
 
-In this bulk expression matrix, each row is a gene and each column is a sample. The dimensions of LUAD bulk dataset are:
-```{r}
-dim(bulk_dataset)
-```
-which indicate there are 56716 genes and 471 samples in total. Besides, all of these samples have clinical outcomes:
-```{r}
-head(bulk_survival)
-all(colnames(bulk_dataset) == bulk_survival$TCGA_patient_barcode)
-```
-Note that Scissor requires a three-column format of clinical data, if the users want to identify a cell subpopulation that are correlated with good or bad survival. The first column contains the sample ID (observations), which should in the same order with the columns in bulk expression matrix. The second column is the survival time and the third column stands for the event of interest (e.g.recurrence of cancer or death), which is indicated by the variable "Status" with 0 means no event (censored) and 1 means event. 
+There are three data sources for Scissor inputs: a single-cell expression matrix, a bulk expression matrix, and a phenotype of interest. The phenotype annotation of each bulk sample can be a continuous dependent variable, binary group indicator vector, or clinical survival data. In this tutorial, we use several applications on the Lung Adenocarcinoma (LUAD) scRNA-seq cancer cells as examples to show how to execute Scissor in real applications. 
 
-Then, we load in the LUAD single-cell RNA-seq raw counts data:
+## Apply Scissor with Cox regression
+
+In our first example, we use the LUAD bulk samples with survival information in Scissor to identify aggressive cancer cell subpopulations within the LUAD cancer cells. 
+
+### Prepare the scRNA-seq data 
+
+We load in the LUAD scRNA-seq raw counts data:
 ```{r}
-load(url('https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/sc_dataset.RData'))
+location <- "https://xialab.s3-us-west-2.amazonaws.com/Duanchen/Scissor_data/"
+load(url(paste0(location, 'scRNA-seq.RData')))
 ```
-Same with the bulk expression matrix, the rows and columns are genes and cells, respectively. The dimensions of LUAD single-cell data are:
+In this LUAD scRNA-seq data, each row represents a gene and each column represents a cancer cell. The dimensions of the LUAD single-cell data are:
 ```{r}
 dim(sc_dataset)
 ```
-The users do not need to keep the common genes between bulk and single-cell expression datasets, which can be automatically achieved by the preprocessing steps of Scissor. 
-
-
-## Identify the most relevent cell subpopulations by Scissor
-Given the above inputs, now we can use Scissor to select the most relevent cell subpopulations with the guidence of phenotype (survival outcomes), which is fitted by a Cox regression model (`family = 'cox'`). We set the ratio between the L1 norm and Laplacian regularization to 0.05 (`alpha = 0.05`):
-```{r warning=FALSE}
-infos <- Scissor(alpha = 0.05, family = 'cox', Given_Inputs = NULL, 
-                 bulk_dataset = bulk_dataset, sc_dataset = sc_dataset, cor_type = 'pearson',
-                 survival_info = bulk_survival, save_file = 'test.RData')
-
-```
-The output message of Scissor indicates that there are 201 Scissor+ cells and 4 Scissor- cells. The information of selected cells is saved in variable `infos`:
+which indicates there are 33,694 genes and 4,102 cancer cells in total. For the scRNA-seq data used in Scissor, a Seurat object that contains the preprocessed data and constructed network is preferred. We use the functions in the Seurat package to preprocess this data and construct a cell-cell similarity network. In this package, we wrapped the Seurat analysis pipeline into the following function:
 ```{r}
-names(infos)
-length(infos$Cell_positive)
-infos$Cell_positive[1:4]
-length(infos$Cell_negative)
-infos$Cell_negative
+sc_dataset <- Seurat_preprocessing(sc_dataset, verbose = F)
 ```
-Besides, the output of Scissor also contains a preprocessed single-cell Seurat object `Seurat_data`, which can directly accept the functions in `Seurat` package for analysis and visualization. The internal function in Scissor will automatically save the selected cells into a metadata in `Seurat_data`. Therefore, users can visualize the selected cells as:
+The output of `Seurat_preprocessing` function is a Seurat object:
+```{r}
+class(sc_dataset)
+```
+It contains the required preprocessed matrix and constructed cell-cell similarity network, as well as other helpful dimensionality reduction results, such as the PCA, t-SNE, and UMAP. 
+```{r}
+names(sc_dataset)
+```
+Users can tune the preprocessing parameters in this function to achieve different goals and apply other related Seurat functions to `sc_dataset`. For example, we can visualize these 4,102 cells using the UMAP coordinates:
 ```{r fig.align="center", fig.width = 5.5}
-DimPlot(object = infos$Seurat_data, reduction = 'umap', group.by = 'scissor', 
-        cols = c('grey','red','blue'), pt.size = 1, order = c(2,1))
+DimPlot(sc_dataset, reduction = 'umap', label = T, label.size = 10)
 ```
-in which `1` stand for the Scissor+ cells and `2` stand for the Scissor- cells.
+Furthermore, users can also provide a Seurat object using their own Seurat analysis pipeline (a normalized data and a constructed network is required) or a scRNA-seq dataset preprocessed by other tools.
 
+### Prepare the bulk data and phenotype
 
-## Parameter tuning in Scissor
-Usually, users cannot obtain the most informative selected cell at the first trial. In applications, Scissor will automatically save the preprocessed inputs for regression into a RData (`save_file = 'test.RData`), which is convenient for users to directly execute the parameter tuning step. Suppose users use the above file name `test.RData`, Scissor can reselect the cells with a new alpha (`alpha = 0.01`) as:
+We load in the preprocessed LUAD bulk expression matrix and the corresponding survival data downloaded from The Cancer Genome Atlas (TCGA). 
+```{r}
+load(url(paste0(location, 'TCGA_LUAD_exp1.RData')))
+load(url(paste0(location, 'TCGA_LUAD_survival.RData')))
+```
+Same with the LUAD scRNA-seq data, the rows and columns are genes and cells, respectively. The dimensions of the LUAD bulk dataset are:
+```{r}
+dim(bulk_dataset)
+```
+It shows this data has 56716 genes and 471 samples in total. Users do not need to keep the common genes between the single-cell and bulk samples, which can be automatically achieved in Scissor. Besides, all of these samples have clinical outcomes:
+```{r}
+head(bulk_survival)
+```
+The clinical survival phenotype requires a two-column matrix with columns named 'time' and 'status'. The first column contains the sample IDs (observations), which should in the same order as the columns in the bulk expression matrix. The second column is a binary variable, with '1' indicating event (e.g.recurrence of cancer or death), and '0' indicating right-censored.
+```{r}
+all(colnames(bulk_dataset) == bulk_survival$TCGA_patient_barcode)
+phenotype <- bulk_survival[,2:3]
+colnames(phenotype) <- c("time", "status")
+head(phenotype)
+```
+
+### Execute Scissor to select the informative cells
+
+Given the above inputs, we can use Scissor to select the phenotype-associated cell subpopulations, which is fitted by a Cox regression model (`family = 'cox'`):
 ```{r warning=FALSE}
-infos <- Scissor(alpha = 0.01, family = 'cox', Given_Inputs = 'test.RData',
-                 bulk_dataset, sc_dataset, bulk_survival)
-
+infos1 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = 0.05, 
+                 family = "cox", Save_file = 'Scissor_LUAD_survival.RData')
 ```
-A smaller alpha leads to a less sparse selection result. At this time, the output message of Scissor indicates that there are 573 Scissor+ cells and 20 Scissor- cells. Usually, we recommand that the total selected cells of Scissor should not exceed 10% of total cells in single-cell RNA-seq data. In practice, users can change the alpha with `Given_Inputs` equals to the saved file name to meet their different goals.
+As showed in the printing messages, Scissor first outputs the five-number summary of the correlations between the single-cell and bulk samples. We found that all the correlations are positive, and these values are not close to 0. In real applications, Scissor will give a warning message if the median correlation of the used datasets is too low (`< 0.01`), which may cause unreliable phenotype-to-cell associations. 
 
+In total, Scissor identifies 201 Scissor+ cells associated with worse survival and 4 Scissor- cells associated with good survival, which is saved in `infos1`:
+```{r}
+names(infos1)
+length(infos1$Scissor_pos)
+infos1$Scissor_pos[1:4]
+length(infos1$Scissor_neg)
+infos1$Scissor_neg
+```
+These selected cells account for 5% of total 4,102 cells. We can visualize the Scissor selected cells by adding a new annotation in the Seurat object `sc_dataset`:
+```{r fig.align="center", fig.width = 5.5}
+Scissor_select <- rep(0, ncol(sc_dataset))
+names(Scissor_select) <- colnames(sc_dataset)
+Scissor_select[infos1$Scissor_pos] <- 1
+Scissor_select[infos1$Scissor_neg] <- 2
+sc_dataset <- AddMetaData(sc_dataset, metadata = Scissor_select, col.name = "scissor")
+DimPlot(sc_dataset, reduction = 'umap', group.by = 'scissor', cols = c('grey','indianred1','royalblue'), pt.size = 1.2, order = c(2,1))
+```
+in which 1 stand for Scissor+ cells and 2 stand for Scissor- cells.
+
+### Tune model paramters
+
+We set the parameter α equals to 0.05 (`alpha = 0.05`) in the above implementation. Parameter α balances the effect of the L1-norm and the network-based penalties. A larger α inclines to emphasize the L1-norm to encourage sparsity, making Scissor selects fewer cells than the result using a smaller α. In application, Scissor can automatically save the regression inputs into a RData (`Save_file = 'Scissor_LUAD_survival.RData`), which is convenient for the users to tune different α. We can set `Load_file = 'Scissor_LUAD_survival.RData'` and use the default α sequence (`alpha = NULL`) to run Scissor:  
+```{r warning=FALSE}
+infos2 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = NULL, cutoff = 0.03, 
+                 family = "cox", Load_file = 'Scissor_LUAD_survival.RData')
+```
+In the above implementation, we set a percentage cutoff (`cutoff = 0.03`), which stopped the α searching when the total percentage of the selected cells is less than 3%. The corresponding α equals 0.2, which selected 78 Scissor+ cells and 5 Scissor- cells. To avoid arbitrarily choosing alpha in real applications, we recommend searching α based on the percentage of the selected cells in total cells. The default value of `cutoff` is 0.2, i.e., the number of the Scissor selected cells should not exceed 20% of total cells in the single-cell data. Furthermore, users can set their customized α sequence and percentage cutoff to achieve different goals. For example, we can run Scissor as:
+```{r warning=FALSE}
+infos3 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = seq(1,10,2)/1000, cutoff = 0.2,
+                 family = "cox", Load_file = 'Scissor_LUAD_survival.RData')
+```
+
+## Apply Scissor with logistic regression
+
+In another example, we use other phenotypical features provided by TCGA-LUAD to guide the identification of cell subpopulations within the same 4,102 cancer cells. Here we focus on *TP53*, one of the most commonly mutated tumor suppressor genes found in human malignancies. 
+
+### Prepare the bulk data and phenotype
+
+We download the *TP53* mutation status (mutant or wild-type) from TCGA-LUAD as the phenotypes of bulk samples
+```{r}
+load(url(paste0(location, 'TCGA_LUAD_exp2.RData')))
+load(url(paste0(location, 'TCGA_LUAD_TP53_mutation.RData')))
+```
+There are 498 bulk samples; 255 of them are detected with *TP53* mutant, and the remainings are wild-types. 
+```{r}
+table(TP53_mutation)
+```
+
+### Execute Scissor to select the informative cells
+
+Given the above binary variable with `TP53 mutant = 1` and `wild-type = 0`, we use `family = 'binomial'` in Scissor to select the phenotype-associated cell subpopulations:
+```{r warning=FALSE}
+phenotype <- TP53_mutation
+tag <- c('wild-type', 'TP53 mutant')
+infos4 <- Scissor(bulk_dataset, sc_dataset, phenotype, tag = tag, alpha = 0.5, 
+                 family = "binomial", Save_file = "Scissor_LUAD_TP53_mutation.RData")
+```
+Note that the parameter `tag` is used to double check the phenotype encoding. The different 0-1 encoding in phenotype may lead to opposite interpretations. Please see the next section **Scissor result interpretation** for more details. Similarly, we can directly tune other α values by setting `Load_file = "Scissor_LUAD_TP53_mutation.RData`:
+```{r warning=FALSE}
+infos5 <- Scissor(bulk_dataset, sc_dataset, phenotype, tag = tag, alpha = 0.2, 
+                 family = "binomial", Load_file = "Scissor_LUAD_TP53_mutation.RData")
+```
+In total, Scissor identifies 414 Scissor+ cells associated with the *TP53* mutant and 318 Scissor- cells associated with the wild-type. We can visualize these selected cells using UMAP technique:
+```{r fig.align="center", fig.width = 5.5}
+Scissor_select <- rep(0, ncol(sc_dataset))
+names(Scissor_select) <- colnames(sc_dataset)
+Scissor_select[infos5$Scissor_pos] <- 1
+Scissor_select[infos5$Scissor_neg] <- 2
+sc_dataset <- AddMetaData(sc_dataset, metadata = Scissor_select, col.name = "scissor")
+DimPlot(sc_dataset, reduction = 'umap', group.by = 'scissor', cols = c('grey','indianred1','royalblue'), pt.size = 1.2, order = c(2,1))
+```
+in which 1 stand for Scissor+ cells and 2 stand for Scissor- cells.
+
+# Scissor result interpretation
+
+Both Scissor+ cells and Scissor- cells are the Scissor selected cells that are most highly associated with the specified phenotypes. The associations between the Scissor selected cells and phenotypes depend on the used model and should be interpreted in a specific context. For both linear regression and classification models, the initial values in parameter `phenotype` will affect the interpretation. For example, in the above application using the *TP53* mutation status, if *TP53* mutant is encoded as `1`, and wild-type is `0`, Scissor+ cells would be associated with the *TP53* mutant, and Scissor- cells will be associated with the wild-types. If the coding is reversed in `phenotype` for two phenotypes, the interpretations of Scissor+ cells and Scissor- cells are changed accordingly. For Cox regression, Scissor+ cells are associated with worse survival, and Scissor- cells are associated with good survival. 
+
+Scissor can associate cells with phenotypes, and this kind of association is a relative concept between phenotypes. Namely, Scissor assigns which phenotype a cell is more likely associated with than the other phenotype. Considering the possible negative correlations between the single-cell and bulk samples, we can further interpret a cell by assigning it into the following two categories (Figure 1): if the sum of a cell’s correlations with bulk samples is greater than 0, this cell is more similar to the associated phenotype. Otherwise, this cell should be interpreted as more dissimilar to the other phenotype. In most cases, the identified cells fall into the “more similar” category, and the negative correlations would not affect the interpretations of Scissor.
+
+```{r pressure, echo=FALSE, fig.cap="Figure 1. General criterion to interpret phenotypes.", fig.align="center", out.width = '45%'}
+knitr::include_graphics("Picture1.png")
+```
+
+# Reliability significance test
+
+To determine whether the inferred phenotype-to-cell associations are reliable, we use the function `reliability.test` to perform a reliability significance test. The motivation for the reliability significance test is: if the chosen single-cell and bulk data are not suitable for the phenotype-to-cell associations, the correlations would be less informative and not well associated with the phenotype labels. Thus, the corresponding prediction performance would be poor and not be significantly distinguishable from the randomly permutated labels. In this tutorial, we test the identified associations in the above applications as examples to show how to run `reliability.test`.
+
+We choose the 205 Scissor selected cells associated with worse or good survival. The saved Rdata in Scissor can be used as the test inputs:
+```{r}
+load('Scissor_LUAD_survival.RData')
+```
+We use the 10-fold cross-validation (`nfold = 10`) and set the permutation time as 10 (`n = 10`) to save some time. In real applications, the reliability significance test can be time-consuming for larger permutation time (default `n = 100`).
+```{r warning=FALSE}
+numbers <- length(infos1$Scissor_pos) + length(infos1$Scissor_neg)
+result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 1, nfold = 10)
+```
+We can see that `reliability.test` prints a test statistic and a test p-value. This p-value is less than 0.05, indicating that these associations are reliable. The output `result1` also contains the evaluation measurements calculated using the real label and permutated labels:
+```{r}
+names(result1)
+```
+In our study, the evaluation measurement is the mean squared error (MSE) for linear regression, the area under the ROC curve (AUC) for classification, and the concordance index (c-index) for Cox regression. The averaged evaluation measurement calculated using the real label is used to serve as the test statistic.
+
+Similarly, we can test the Scissor selected cells associated with the *TP53* mutant or wild-types.
+```{r warning=FALSE}
+load('Scissor_LUAD_TP53_mutation.RData')
+numbers <- length(infos5$Scissor_pos) + length(infos5$Scissor_neg)
+result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 1, nfold = 10)
+```
 
 # Reference
-Phenotype-guided subpopulation identification from single-cell sequencing data.
+Phenotype-guided subpopulation identification from single-cell sequencing data (2021).
 
-Duanchen Sun, Xiangnan Guan, Amy E Moran, David Z Qian, Pepper J Schedin, Andrew Adey, Paul T Spellman, and Zheng Xia
+Duanchen Sun and Zheng Xia
