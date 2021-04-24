@@ -4,11 +4,11 @@
 `Scissor` is a novel approach that utilizes the phenotypes, such as disease stage, tumor metastasis, treatment response, and survival outcomes, collected from bulk assays to identify the most highly phenotype-associated cell subpopulations from single-cell data. The workflow of Scissor is shown in the following Figure:
 
 <p align="center">
-<img src=Figure_Method.jpg height="702" width="600">
+<img src=Figure_Method.pdf height="702" width="600">
 </p>
 
 ### News ###
-Jun, 2020: Scissor version 1.0.0 is launched.
+Jun, 2020: Scissor version 1.0.0 is launched.  
 Apr, 2021: Scissor version 2.0.0 is launched.
 
 ### Installation ###
