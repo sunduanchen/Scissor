@@ -51,6 +51,7 @@ Please see Scissor Tutorial for more details.}
 }
 \value{
 This function returns a list with the following components:
+  \item{para}{A list contains the final model parameters.}
   \item{Coefs}{The regression coefficient for each cell.}
   \item{Scissor_pos}{The cell IDs of Scissor+ cells.}
   \item{Scissor_neg}{The cell IDs of Scissor- cells.}

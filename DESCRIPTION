@@ -12,5 +12,5 @@ LinkingTo: Rcpp, RcppEigen
 NeedsCompilation: yes
 BugReports: https://github.com/sunduanchen/Scissor/issues
 URL: https://github.com/sunduanchen/Scissor
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Encoding: UTF-8

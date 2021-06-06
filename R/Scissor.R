@@ -39,6 +39,7 @@
 #' Please see Scissor Tutorial for more details.
 #'
 #' @return This function returns a list with the following components:
+#'   \item{para}{A list contains the final model parameters.}
 #'   \item{Coefs}{The regression coefficient for each cell.}
 #'   \item{Scissor_pos}{The cell IDs of Scissor+ cells.}
 #'   \item{Scissor_neg}{The cell IDs of Scissor- cells.}
@@ -80,8 +81,8 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
         colnames(dataset1) <- colnames(dataset0)
 
         Expression_bulk <- dataset1[,1:ncol(bulk_dataset)]
-        Expression_pbmc <- dataset1[,(ncol(bulk_dataset) + 1):ncol(dataset1)]
-        X <- cor(Expression_bulk, Expression_pbmc)
+        Expression_cell <- dataset1[,(ncol(bulk_dataset) + 1):ncol(dataset1)]
+        X <- cor(Expression_bulk, Expression_cell)
 
         quality_check <- quantile(X)
         print("|**************************************************|")
@@ -121,7 +122,7 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
                 print("Perform cox regression on the given clinical outcomes:")
             }
         }
-        save(X, Y, network, file = Save_file)
+        save(X, Y, network, Expression_bulk, Expression_cell, file = Save_file)
     }else{
         load(Load_file)
     }
@@ -145,16 +146,15 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
         print(sprintf("Scissor identified %d Scissor+ cells and %d Scissor- cells.", length(Cell1), length(Cell2)))
         print(sprintf("The percentage of selected cell is: %s%%", formatC(percentage*100, format = 'f', digits = 3)))
 
-        if(percentage < cutoff){
+        if (percentage < cutoff){
             break
         }
         cat("\n")
     }
     print("|**************************************************|")
 
-    #print(colSums(X[,c(Cell1,Cell2)]))
-
-    return(list(Coefs = Coefs,
+    return(list(para = list(alpha = alpha[i], lambda = fit0$lambda.min, family = family),
+                Coefs = Coefs,
                 Scissor_pos = Cell1,
                 Scissor_neg = Cell2))
 }

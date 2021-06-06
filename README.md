@@ -8,6 +8,7 @@
 </p>
 
 ### News ###
+May, 2021: Scissor version 2.1.0 is updated.
 Feb, 2021: Scissor version 2.0.0 is launched.  
 Jun, 2020: Scissor version 1.0.0 is launched.
 
@@ -32,3 +33,5 @@ Duanchen Sun and Zheng Xia*<br />
 
 ### License ###
 Scissor is licensed under the GNU General Public License v3.0.
+
+Improvements and new features of Scissor will be updated on a regular basis. Please post on the [GitHub discussion page](https://github.com/sunduanchen/Scissor/discussions) with any questions.
