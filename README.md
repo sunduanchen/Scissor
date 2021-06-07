@@ -8,9 +8,9 @@
 </p>
 
 ### News ###
-May, 2021: Scissor version 2.1.0 is updated.  
-Feb, 2021: Scissor version 2.0.0 is launched.  
-Jun, 2020: Scissor version 1.0.0 is launched.
+* May, 2021: Scissor version 2.1.0 is updated.  
+* Feb, 2021: Scissor version 2.0.0 is launched.  
+* Jun, 2020: Scissor version 1.0.0 is launched.
 
 ### Installation ###
 * Prerequisites:
