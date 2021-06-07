@@ -98,10 +98,6 @@ infos1$Scissor_pos[1:4]
 length(infos1$Scissor_neg)
 infos1$Scissor_neg
 ```
-We can get access to the final model parameters using
-```{r}
-infos1$para
-```
 These selected cells account for 5% of total 4,102 cells. We can visualize the Scissor selected cells by adding a new annotation in the Seurat object `sc_dataset`:
 ```{r fig.align="center", fig.width = 5.5}
 Scissor_select <- rep(0, ncol(sc_dataset))
@@ -113,17 +109,22 @@ DimPlot(sc_dataset, reduction = 'umap', group.by = 'scissor', cols = c('grey','i
 ```
 in which 1 stand for Scissor+ cells and 2 stand for Scissor- cells.
 
+At last, we can get access to the parameters and used model using:
+```{r}
+infos1$para
+```
+
 ### Tune model paramters
 
 We set the parameter α equals to 0.05 (`alpha = 0.05`) in the above implementation. Parameter α balances the effect of the L1-norm and the network-based penalties. A larger α inclines to emphasize the L1-norm to encourage sparsity, making Scissor selects fewer cells than the result using a smaller α. In application, Scissor can automatically save the regression inputs into a RData (`Save_file = 'Scissor_LUAD_survival.RData`), which is convenient for the users to tune different α. We can set `Load_file = 'Scissor_LUAD_survival.RData'` and use the default α sequence (`alpha = NULL`) to run Scissor:  
 ```{r warning=FALSE}
-#infos2 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = NULL, cutoff = 0.03, 
-#                 family = "cox", Load_file = 'Scissor_LUAD_survival.RData')
+infos2 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = NULL, cutoff = 0.03, 
+                 family = "cox", Load_file = 'Scissor_LUAD_survival.RData')
 ```
-In the above implementation, we set a percentage cutoff (`cutoff = 0.03`), which stopped the α searching when the total percentage of the selected cells is less than 3%. The corresponding α equals 0.2, which selected 78 Scissor+ cells and 5 Scissor- cells. To avoid arbitrarily choosing alpha in real applications, we recommend searching α based on the percentage of the selected cells in total cells. The default value of `cutoff` is 0.2, i.e., the number of the Scissor selected cells should not exceed 20% of total cells in the single-cell data. Furthermore, users can set their customized α sequence and percentage cutoff to achieve different goals. For example, we can run Scissor as:
+In the above implementation, we set a new percentage cutoff (`cutoff = 0.03`), which stopped the α searching when the total percentage of the selected cells is less than 3%. The corresponding α equals 0.2, which selected 78 Scissor+ cells and 5 Scissor- cells. To avoid arbitrarily choosing alpha in real applications, we recommend searching α based on the percentage of the selected cells in total cells. The default value of `cutoff` is 0.2, i.e., the number of the Scissor selected cells should not exceed 20% of total cells in the single-cell data. Furthermore, users can set their customized α sequence and percentage cutoff to achieve their different goals. For example, we can run Scissor as:
 ```{r warning=FALSE}
-#infos3 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = seq(1,10,2)/1000, cutoff = 0.2,
-#                 family = "cox", Load_file = 'Scissor_LUAD_survival.RData')
+infos3 <- Scissor(bulk_dataset, sc_dataset, phenotype, alpha = seq(1,10,2)/1000, cutoff = 0.2,
+                 family = "cox", Load_file = 'Scissor_LUAD_survival.RData')
 ```
 
 ## Apply Scissor with logistic regression
@@ -132,12 +133,12 @@ In another example, we use other phenotypical features provided by TCGA-LUAD to 
 
 ### Prepare the bulk data and phenotype
 
-We download the *TP53* mutation status (mutant or wild-type) from TCGA-LUAD as the phenotypes of bulk samples
+We download the *TP53* mutation status (mutant or wild-type) from TCGA-LUAD as the phenotypes of bulk samples:
 ```{r}
 load(url(paste0(location, 'TCGA_LUAD_exp2.RData')))
 load(url(paste0(location, 'TCGA_LUAD_TP53_mutation.RData')))
 ```
-There are 498 bulk samples; 255 of them are detected with *TP53* mutant, and the remainings are wild-types. 
+There are 498 bulk samples; 255 of them are detected with *TP53* mutant, and the remainings are wild-types: 
 ```{r}
 table(TP53_mutation)
 ```
@@ -173,7 +174,7 @@ Both Scissor+ cells and Scissor- cells are the Scissor selected cells that are m
 
 Scissor can associate cells with phenotypes, and this kind of association is a relative concept between phenotypes. Namely, Scissor assigns which phenotype a cell is more likely associated with than the other phenotype. Considering the possible negative correlations between the single-cell and bulk samples, we can further interpret a cell by assigning it into the following three categories (Table 1): if the average of a cell’s correlations with all bulk samples is greater than 0 and the number of positive correlations is larger than the number of the negative correlations, this cell is more similar to the associated phenotype; if the average of a cell’s correlations is less than 0 and the number of negative correlations is larger than the number of positive correlations, this cell should be interpreted as more dissimilar to the other phenotype; otherwise, this cell’s association with the phenotype is undeterminable. In most cases, the negative correlation values are very few and the identified cells fall into the “more similar” category.
 
-```{r pressure, echo=FALSE, fig.cap="", fig.align="center", out.width = '30%'}
+```{r pressure, echo=FALSE, fig.cap="", fig.align="center", out.width = '70%'}
 knitr::include_graphics("Table1.png")
 ```
 
@@ -188,11 +189,11 @@ load('Scissor_LUAD_survival.RData')
 We use the 10-fold cross-validation (`nfold = 10`) and set the permutation time as 10 (`n = 10`) to save some time. In real applications, the reliability significance test can be time-consuming for larger permutation time (default `n = 100`).
 ```{r warning=FALSE}
 numbers <- length(infos1$Scissor_pos) + length(infos1$Scissor_neg)
-#result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 10, nfold = 10)
+result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 1, nfold = 10)
 ```
 We can see that `reliability.test` prints a test statistic and a test p-value. This p-value is less than 0.05, indicating that these associations are reliable. The output `result1` also contains the evaluation measurements calculated using the real label and permutated labels:
 ```{r}
-#names(result1)
+names(result1)
 ```
 In our study, the evaluation measurement is the mean squared error (MSE) for linear regression, the area under the ROC curve (AUC) for classification, and the concordance index (c-index) for Cox regression. The averaged evaluation measurement calculated using the real label is used to serve as the test statistic.
 
@@ -200,31 +201,33 @@ Similarly, we can test the Scissor selected cells associated with the *TP53* mut
 ```{r warning=FALSE}
 load('Scissor_LUAD_TP53_mutation.RData')
 numbers <- length(infos5$Scissor_pos) + length(infos5$Scissor_neg)
-#result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 10, nfold = 10)
+result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 1, nfold = 10)
 ```
 
 # Cell level evaluations
-Finally, we implemented Scissor to output cell level evaluations for each Scissor selected cell (function name: evaluate.cell). Now Scissor can report the mean correlations and the percentages of positive/negative correlations of a selected cell with all bulk samples. The percentage of positive correlation greater than 50% corresponds to in the updated criterion. 
-```{r}
-evaluate_result <- evaluate.cell('Scissor_LUAD_survival.RData', infos1, FDR = 0.05, bootstrap_n = 100)
-```
 
-```{r}
-colnames(evaluate_result)
+Finally, we can use the function `evaluate.cell` to obtain some supporting information for each Scissor selected cell. Using the application on the LUAD cancer cells with survival as an example, we evaluate the 205 Scissor selected cells by running the following code:
+```{r warning=FALSE}
+evaluate_summary <- evaluate.cell('Scissor_LUAD_survival.RData', infos1, FDR = 0.05, bootstrap_n = 100)
 ```
+The `evaluate.cell` function contains two strategies to evaluate each Scissor selected cell. The first strategy focuses on the correlation values and their corresponding p-values for each selected cell with all bulk samples, which includes the first four columns in the output `data.frame` variable:
+```{r}
+evaluate_summary[1:5,1:4]
+```
+We can see that the `evaluate.cell` function reports the mean correlation (column `Mean correlation`) and the percentages of positive/negative correlations (columns `Correlation > 0` and `Correlation < 0`) of a cell with all bulk samples, which correspond to the conditions in our proposed general interpretation criterion (Table 1). In this application, all Scissor selected cells are more similar to the associated phenotypes:
+```{r}
+all(evaluate_summary$`Mean correlation` & as.numeric(gsub('%','',evaluate_summary$`Correlation > 0`)) > 50)
+```
+The `evaluate.cell` function also inspect the FDRs derived from the standard correlation p-values for each selected cell. It outputs the percentages of significant correlations (FDR < 0.05, column `Significant Correlation`) for each selected cell. 
 
+The second strategy uses the nonparametric bootstrap to assess the coefficient distribution for each Scissor selected cell:
 ```{r}
-evaluate_result[1:5,1:4]
+evaluate_summary[1:5,5:10]
 ```
-the standard correlation p-value should also be inspected to assure the validity of the Scissor result
-```{r}
-evaluate_result[1:5,5:11]
-```
-we used the nonparametric bootstrap strategy to assess the sampling distribution of coefficient 𝜷 for all the Scissor selected cells. 
-
-Using the application on the LUAD cancer cells with TP53 mutation as an example, we showed the evaluation results on ten example cells. By utilizing the bootstrap resampling, we can assess the cell level metrics such as the coefficient distribution. As you suggested, we added this utility into our Scissor package (function name: evaluate.cell). This function will output the five-number summary to show the range of the beta coefficient for each Scissor selected cell, which includes the minimum value (0%), the lower quartile (25%), the median value (50%), the upper quartile (75%), and the maximum value (100%). 
+By utilizing the bootstrap resampling, the `evaluate.cell` function outputs the five-number summary to show the range of the coefficient for each Scissor selected cell, which includes the minimum value (column `Beta 0%`), the lower quartile (column `Beta 25%`), the median value (column `Beta 50%`), the upper quartile (column `Beta 75%`), and the maximum value (column `Beta 100%`). 
 
 # Reference
+
 Phenotype-guided subpopulation identification from single-cell sequencing data (2021).
 
 Duanchen Sun and Zheng Xia
