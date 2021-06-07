@@ -2,7 +2,7 @@
 % Please edit documentation in R/evaluate.cell.R
 \name{evaluate.cell}
 \alias{evaluate.cell}
-\title{Cell-level evaluations on the Scissor selected cells}
+\title{Cell level evaluations on the Scissor selected cells}
 \usage{
 evaluate.cell(Load_file, Scissor_result, FDR_cutoff = 0.05, bootstrap_n = 100)
 }

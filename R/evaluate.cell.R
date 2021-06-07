@@ -1,9 +1,10 @@
-#' Cell-level evaluations on the Scissor selected cells
+#' Cell level evaluations on the Scissor selected cells
 #'
 #' This function perfroms evaluations for each Scissor selected cell.
 #'
-#' This function uses two main strategies to
-#' we used the nonparametric bootstrap strategy to assess the sampling distribution of coefficient or all the Scissor selected ddd cells.#'
+#' This function uses two main strategies to evaluate each Scissor selected cell. Correlation check was first performed for each cell. Then,
+#' we used the nonparametric bootstrap strategy to assess the sampling distribution of coefficient for each Scissor selected cell.
+#'
 #' @param Load_file File name for loading the preprocessed regression inputs.
 #' @param Scissor_result Output variable from Scissor.
 #' @param FDR_cutoff FDR cutoff in the correlation test for each pair of bulk sample and single-cell. The default value is 0.05.
@@ -37,27 +38,27 @@ evaluate.cell <- function(Load_file, Scissor_result, FDR_cutoff = 0.05, bootstra
                         c("Mean correlation","Correlation > 0","Correlation < 0","Significant Correlation","Coefficient",
                           "Beta 0%","Beta 25%","Beta 50%","Beta 75%","Beta 100%","Probability of zero"))))
 
-    # print("|**************************************************|")
-    # print("Performing correlation check for each selected cell")
-    # pb1 <- progress_bar$new(total = m)
-    # cor_test_p <- matrix(0, m, n)
-    # for (i in 1:m){
-    #     pb1$tick()
-    #     Sys.sleep(1 / 100)
-    #     for (j in 1:n){
-    #         cor_test_p[i,j] <- cor.test(Expression_bulk[,i], Expression_cell[,selected_cell[j]])$p.value
-    #     }
-    # }
-    # cor_test_FDR <- matrix(p.adjust(as.numeric(cor_test_p), method = "fdr"), m)
-    # for (j in 1:n){
-    #     evaluate_summary[j,1] <- mean(X[,selected_cell[j]])
-    #     evaluate_summary[j,2] <- percent(sum(X[,selected_cell[j]] > 0)/m)
-    #     evaluate_summary[j,3] <- percent(sum(X[,selected_cell[j]] < 0)/m)
-    #     evaluate_summary[j,4] <- percent(sum(cor_test_FDR[,j] < FDR_cutoff)/m)
-    # }
-    # names(Scissor_result$Coefs) <- colnames(X)
-    # evaluate_summary[,5] <- Scissor_result$Coefs[selected_cell]
-    # cat("Finished!\n")
+    print("|**************************************************|")
+    print("Performing correlation check for each selected cell")
+    pb1 <- progress_bar$new(total = m)
+    cor_test_p <- matrix(0, m, n)
+    for (i in 1:m){
+        #pb1$tick()
+        Sys.sleep(1 / 100)
+        for (j in 1:n){
+            cor_test_p[i,j] <- cor.test(Expression_bulk[,i], Expression_cell[,selected_cell[j]])$p.value
+        }
+    }
+    cor_test_FDR <- matrix(p.adjust(as.numeric(cor_test_p), method = "fdr"), m)
+    for (j in 1:n){
+        evaluate_summary[j,1] <- mean(X[,selected_cell[j]])
+        evaluate_summary[j,2] <- percent(sum(X[,selected_cell[j]] > 0)/m)
+        evaluate_summary[j,3] <- percent(sum(X[,selected_cell[j]] < 0)/m)
+        evaluate_summary[j,4] <- percent(sum(cor_test_FDR[,j] < FDR_cutoff)/m)
+    }
+    names(Scissor_result$Coefs) <- colnames(X)
+    evaluate_summary[,5] <- Scissor_result$Coefs[selected_cell]
+    cat("Finished!\n")
 
     print("|**************************************************|")
     print("Performing nonparametric bootstrap")
@@ -86,7 +87,7 @@ evaluate.cell <- function(Load_file, Scissor_result, FDR_cutoff = 0.05, bootstra
         }
         names(Coefs_tmp) <- colnames(X2)
         beta_bootstrap[i,] <- Coefs_tmp[selected_cell]
-        pb2$tick()
+        #pb2$tick()
         Sys.sleep(1 / 100)
         if (i == bootstrap_n) cat("Finished!\n")
     }
