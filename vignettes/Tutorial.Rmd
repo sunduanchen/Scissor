@@ -98,6 +98,10 @@ infos1$Scissor_pos[1:4]
 length(infos1$Scissor_neg)
 infos1$Scissor_neg
 ```
+We can get access to the final model parameters using
+```{r}
+infos1$para
+```
 These selected cells account for 5% of total 4,102 cells. We can visualize the Scissor selected cells by adding a new annotation in the Seurat object `sc_dataset`:
 ```{r fig.align="center", fig.width = 5.5}
 Scissor_select <- rep(0, ncol(sc_dataset))
@@ -167,10 +171,10 @@ in which 1 stand for Scissor+ cells and 2 stand for Scissor- cells.
 
 Both Scissor+ cells and Scissor- cells are the Scissor selected cells that are most highly associated with the specified phenotypes. The associations between the Scissor selected cells and phenotypes depend on the used model and should be interpreted in a specific context. For both linear regression and classification models, the initial values in parameter `phenotype` will affect the interpretation. For example, in the above application using the *TP53* mutation status, if *TP53* mutant is encoded as `1`, and wild-type is `0`, Scissor+ cells would be associated with the *TP53* mutant, and Scissor- cells will be associated with the wild-types. If the coding is reversed in `phenotype` for two phenotypes, the interpretations of Scissor+ cells and Scissor- cells are changed accordingly. For Cox regression, Scissor+ cells are associated with worse survival, and Scissor- cells are associated with good survival. 
 
-Scissor can associate cells with phenotypes, and this kind of association is a relative concept between phenotypes. Namely, Scissor assigns which phenotype a cell is more likely associated with than the other phenotype. Considering the possible negative correlations between the single-cell and bulk samples, we can further interpret a cell by assigning it into the following two categories (Figure 1): if the sum of a cell’s correlations with bulk samples is greater than 0, this cell is more similar to the associated phenotype. Otherwise, this cell should be interpreted as more dissimilar to the other phenotype. In most cases, the identified cells fall into the “more similar” category, and the negative correlations would not affect the interpretations of Scissor.
+Scissor can associate cells with phenotypes, and this kind of association is a relative concept between phenotypes. Namely, Scissor assigns which phenotype a cell is more likely associated with than the other phenotype. Considering the possible negative correlations between the single-cell and bulk samples, we can further interpret a cell by assigning it into the following three categories (Table 1): if the average of a cell’s correlations with all bulk samples is greater than 0 and the number of positive correlations is larger than the number of the negative correlations, this cell is more similar to the associated phenotype; if the average of a cell’s correlations is less than 0 and the number of negative correlations is larger than the number of positive correlations, this cell should be interpreted as more dissimilar to the other phenotype; otherwise, this cell’s association with the phenotype is undeterminable. In most cases, the negative correlation values are very few and the identified cells fall into the “more similar” category.
 
-```{r pressure, echo=FALSE, fig.cap="Figure 1. General criterion to interpret phenotypes.", fig.align="center", out.width = '45%'}
-knitr::include_graphics("Picture1.png")
+```{r pressure, echo=FALSE, fig.cap="", fig.align="center", out.width = '45%'}
+knitr::include_graphics("Table1.png")
 ```
 
 # Reliability significance test
@@ -184,7 +188,7 @@ load('Scissor_LUAD_survival.RData')
 We use the 10-fold cross-validation (`nfold = 10`) and set the permutation time as 10 (`n = 10`) to save some time. In real applications, the reliability significance test can be time-consuming for larger permutation time (default `n = 100`).
 ```{r warning=FALSE}
 numbers <- length(infos1$Scissor_pos) + length(infos1$Scissor_neg)
-result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 10, nfold = 10)
+result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 1, nfold = 10)
 ```
 We can see that `reliability.test` prints a test statistic and a test p-value. This p-value is less than 0.05, indicating that these associations are reliable. The output `result1` also contains the evaluation measurements calculated using the real label and permutated labels:
 ```{r}
@@ -196,7 +200,7 @@ Similarly, we can test the Scissor selected cells associated with the *TP53* mut
 ```{r warning=FALSE}
 load('Scissor_LUAD_TP53_mutation.RData')
 numbers <- length(infos5$Scissor_pos) + length(infos5$Scissor_neg)
-result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 10, nfold = 10)
+result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 1, nfold = 10)
 ```
 
 # Reference
