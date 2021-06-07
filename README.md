@@ -9,7 +9,7 @@
 
 ### News ###
 * May, 2021: Scissor version 2.1.0 is updated.  
-+ Add utility for cell level evaludations.
+    + Add utility for cell level evaludations.
 * Feb, 2021: Scissor version 2.0.0 is launched.  
 * Jun, 2020: Scissor version 1.0.0 is launched.
 
