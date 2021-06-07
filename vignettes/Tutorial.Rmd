@@ -14,7 +14,7 @@ vignette: |
 
 # Introduction
 
-This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell RNA-seq (scRNA-seq) data. In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications. 
+This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell sequencing data. In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications. 
 
 We first load in the required package:
 ```{r message=FALSE}
@@ -189,7 +189,7 @@ load('Scissor_LUAD_survival.RData')
 We use the 10-fold cross-validation (`nfold = 10`) and set the permutation time as 10 (`n = 10`) to save some time. In real applications, the reliability significance test can be time-consuming for larger permutation time (default `n = 100`).
 ```{r warning=FALSE}
 numbers <- length(infos1$Scissor_pos) + length(infos1$Scissor_neg)
-result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 1, nfold = 10)
+result1 <- reliability.test(X, Y, network, alpha = 0.05, family = "cox", cell_num = numbers, n = 10, nfold = 10)
 ```
 We can see that `reliability.test` prints a test statistic and a test p-value. This p-value is less than 0.05, indicating that these associations are reliable. The output `result1` also contains the evaluation measurements calculated using the real label and permutated labels:
 ```{r}
@@ -201,7 +201,7 @@ Similarly, we can test the Scissor selected cells associated with the *TP53* mut
 ```{r warning=FALSE}
 load('Scissor_LUAD_TP53_mutation.RData')
 numbers <- length(infos5$Scissor_pos) + length(infos5$Scissor_neg)
-result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 1, nfold = 10)
+result2 <- reliability.test(X, Y, network, alpha = 0.2, family = "binomial", cell_num = numbers, n = 10, nfold = 10)
 ```
 
 # Cell level evaluations
