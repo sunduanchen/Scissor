@@ -9,8 +9,10 @@
 
 ### News ###
 * May, 2021: Scissor version 2.1.0 is updated.  
-    + Add utilities for cell level evaludations (function: evaluate.cell).
+    + Add utilities for cell level evaludations including correlation check and bootstrap (function: evaluate.cell)
 * Feb, 2021: Scissor version 2.0.0 is launched.  
+    + Optimize the inputs and outputs in Scissor main function
+    + Add utilities for the reliability significance test (function: reliability.test)
 * Jun, 2020: Scissor version 1.0.0 is launched.
 
 ### Installation ###
