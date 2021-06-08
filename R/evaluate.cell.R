@@ -2,8 +2,9 @@
 #'
 #' This function perfroms evaluations for each Scissor selected cell.
 #'
-#' This function uses two main strategies to evaluate each Scissor selected cell. Correlation check was first performed for each cell. Then,
-#' we used the nonparametric bootstrap strategy to assess the sampling distribution of coefficient for each Scissor selected cell.
+#' This function uses two main strategies to evaluate each Scissor selected cell. The first strategy focuses on the correlation values
+#' and their corresponding p-values for each selected cell with all bulk samples, which includes the first four columns in the output variable.
+#' The second strategy uses the nonparametric bootstrap to assess the coefficient distribution for each Scissor selected cell.
 #'
 #' @param Load_file File name for loading the preprocessed regression inputs.
 #' @param Scissor_result Output variable from Scissor.

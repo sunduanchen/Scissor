@@ -33,6 +33,7 @@ This function returns a \code{data.frame} with rows are the Scissor selected cel
 This function perfroms evaluations for each Scissor selected cell.
 }
 \details{
-This function uses two main strategies to
-we used the nonparametric bootstrap strategy to assess the sampling distribution of coefficient or all the Scissor selected ddd cells.#'
+This function uses two main strategies to evaluate each Scissor selected cell. The first strategy focuses on the correlation values
+and their corresponding p-values for each selected cell with all bulk samples, which includes the first four columns in the output variable.
+The second strategy uses the nonparametric bootstrap to assess the coefficient distribution for each Scissor selected cell.
 }
