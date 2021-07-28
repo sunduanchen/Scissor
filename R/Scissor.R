@@ -44,7 +44,7 @@
 #'   \item{Scissor_pos}{The cell IDs of Scissor+ cells.}
 #'   \item{Scissor_neg}{The cell IDs of Scissor- cells.}
 #'
-#' @references Duanchen Sun and Zheng Xia (2021): Phenotype-guided subpopulation identification from single-cell sequencing data.
+#' @references Duanchen Sun and Zheng Xia (2021): Phenotype-guided subpopulation identification from single-cell sequencing data. Nature Biotechnology.
 #' @import Seurat Matrix preprocessCore
 #' @export
 Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
