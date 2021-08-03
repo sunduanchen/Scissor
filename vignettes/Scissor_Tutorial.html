@@ -11,7 +11,7 @@
 
 <meta name="author" content="Duanchen Sun" />
 
-<meta name="date" content="2021-06-07" />
+<meta name="date" content="2021-08-03" />
 
 <title>Scissor Tutorial</title>
 
@@ -182,7 +182,7 @@ summary {
 
 <h1 class="title toc-ignore">Scissor Tutorial</h1>
 <h4 class="author">Duanchen Sun</h4>
-<h4 class="date">2021-06-07</h4>
+<h4 class="date">2021-08-03</h4>
 
 </div>
 
@@ -210,8 +210,8 @@ summary {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>This Scissor R package contains the proposed Scissor algorithm (function <code>Scissor</code>), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell sequencing data. In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications.</p>
-<p>We first load in the required package:</p>
+<p>This Scissor R package contains the proposed Scissor algorithm (function <code>Scissor</code>), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell sequencing data. The advantages of Scissor can be briefly summarized as follows: First, the phenotype-associated cells identified by Scissor exhibit distinct molecular properties, which involve crucial marker genes and biological processes of the given phenotypes. Second, Scissor does not require any unsupervised clustering on single-cell data, which avoids subjective decisions of cell cluster numbers or clustering resolution. Finally, Scissor provides a flexible framework to integrate various external phenotypes in bulk data to guide single-cell data analysis, enabling hypothesis-free identification of clinically and biologically relevant cell subpopulations.</p>
+<p>In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications. We first load in the required package:</p>
 <pre class="r"><code>library(Scissor)</code></pre>
 </div>
 <div id="scissor-examples" class="section level1">
@@ -477,7 +477,7 @@ result2 &lt;- reliability.test(X, Y, network, alpha = 0.2, family = &quot;binomi
 <pre class="r"><code>evaluate_summary[1:5,5:10]</code></pre>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Coefficient"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Beta 0%"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Beta 25%"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Beta 50%"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Beta 75%"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Beta 100%"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.0092024","2":"0.00065390","3":"0.0062630","4":"0.0099394","5":"0.014999","6":"0.027478","_rn_":"AAAGTAGAGGAGCGAG_19"},{"1":"0.0037795","2":"0.00011284","3":"0.0032469","4":"0.0067289","5":"0.010585","6":"0.021859","_rn_":"AACCATGCATCTCCCA_19"},{"1":"0.0058368","2":"0.00035189","3":"0.0035868","4":"0.0079545","5":"0.012933","6":"0.028526","_rn_":"AACCGCGAGCTGCGAA_20"},{"1":"0.0044117","2":"0.00058766","3":"0.0038745","4":"0.0082521","5":"0.014761","6":"0.034634","_rn_":"AACTCAGTCCGCGGTA_19"},{"1":"0.0145630","2":"0.00031462","3":"0.0114061","4":"0.0188188","5":"0.027851","6":"0.042822","_rn_":"AACTCCCAGCGCCTTG_19"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Coefficient"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Beta 0%"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Beta 25%"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Beta 50%"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Beta 75%"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Beta 100%"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.0092024","2":"0.00065390","3":"0.0062630","4":"0.0099394","5":"0.014999","6":"0.027478","_rn_":"AAAGTAGAGGAGCGAG_19"},{"1":"0.0037795","2":"0.00011284","3":"0.0032469","4":"0.0067289","5":"0.010585","6":"0.021859","_rn_":"AACCATGCATCTCCCA_19"},{"1":"0.0058368","2":"0.00010630","3":"0.0034998","4":"0.0078410","5":"0.012933","6":"0.028526","_rn_":"AACCGCGAGCTGCGAA_20"},{"1":"0.0044117","2":"0.00058766","3":"0.0038745","4":"0.0082521","5":"0.014761","6":"0.034634","_rn_":"AACTCAGTCCGCGGTA_19"},{"1":"0.0145630","2":"0.00031462","3":"0.0108959","4":"0.0182644","5":"0.027717","6":"0.042822","_rn_":"AACTCCCAGCGCCTTG_19"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>By utilizing the bootstrap resampling, the <code>evaluate.cell</code> function outputs the five-number summary to show the range of the coefficient for each Scissor selected cell, which includes the minimum value (column <code>Beta 0%</code>), the lower quartile (column <code>Beta 25%</code>), the median value (column <code>Beta 50%</code>), the upper quartile (column <code>Beta 75%</code>), and the maximum value (column <code>Beta 100%</code>).</p>

@@ -14,9 +14,9 @@ vignette: |
 
 # Introduction
 
-This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell sequencing data. In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications. 
+This Scissor R package contains the proposed Scissor algorithm (function `Scissor`), which is a novel single-cell data analysis approach that utilizes bulk phenotypes to identify the most highly phenotype-associated cell subpopulations from single-cell sequencing data. The advantages of Scissor can be briefly summarized as follows: First, the phenotype-associated cells identified by Scissor exhibit distinct molecular properties, which involve crucial marker genes and biological processes of the given phenotypes. Second, Scissor does not require any unsupervised clustering on single-cell data, which avoids subjective decisions of cell cluster numbers or clustering resolution. Finally, Scissor provides a flexible framework to integrate various external phenotypes in bulk data to guide single-cell data analysis, enabling hypothesis-free identification of clinically and biologically relevant cell subpopulations.
 
-We first load in the required package:
+In this tutorial (R version: 3.6.1), we use several examples to help users executing Scissor in real applications. We first load in the required package:
 ```{r message=FALSE}
 library(Scissor)
 ```
