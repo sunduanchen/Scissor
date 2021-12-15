@@ -132,7 +132,7 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
     }
     for (i in 1:length(alpha)){
         set.seed(123)
-        fit0 <- APML1(X, Y, family = family, penalty = "Net", alpha = alpha[i], Omega = network, nlambda = 100, nfolds = 10)
+        fit0 <- APML1(X, Y, family = family, penalty = "Net", alpha = alpha[i], Omega = network, nlambda = 100, nfolds = min(10,nrow(X)))
         fit1 <- APML1(X, Y, family = family, penalty = "Net", alpha = alpha[i], Omega = network, lambda = fit0$lambda.min)
         if (family == "binomial"){
             Coefs <- as.numeric(fit1$Beta[2:(ncol(X)+1)])
