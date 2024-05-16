@@ -61,7 +61,7 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
             stop("There is no common genes between the given single-cell and bulk samples.")
         }
         if (class(sc_dataset) == "Seurat"){
-            sc_exprs <- as.matrix(sc_dataset@assays$RNA@data)
+            sc_exprs <- as.matrix(GetAssayData(sc.com,assay = 'RNA',layer = 'data'))
             network  <- as.matrix(sc_dataset@graphs$RNA_snn)
         }else{
             sc_exprs <- as.matrix(sc_dataset)
@@ -115,6 +115,7 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
             }
         }
         if (family == "cox"){
+          Y[,2] <- as.numeric(Y[,2]) ## for character of stage "1", "0"
             Y <- as.matrix(phenotype)
             if (ncol(Y) != 2){
                 stop("The size of survival data is wrong. Please check Scissor inputs and selected regression type.")
