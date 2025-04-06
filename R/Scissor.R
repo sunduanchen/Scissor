@@ -61,7 +61,7 @@ Scissor <- function(bulk_dataset, sc_dataset, phenotype, tag = NULL,
             stop("There is no common genes between the given single-cell and bulk samples.")
         }
         if (class(sc_dataset) == "Seurat"){
-            sc_exprs <- as.matrix(sc_dataset@assays$RNA@data)
+            sc_exprs <- as.matrix(GetAssayData(sc_dataset, assay = "RNA", layer = "data"))
             network  <- as.matrix(sc_dataset@graphs$RNA_snn)
         }else{
             sc_exprs <- as.matrix(sc_dataset)
